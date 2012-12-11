@@ -6,8 +6,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var treeData = {
-    name: "/",
+var xtreeData = {
+    name: "Long String",
+    root: true,
     contents: [
         {
             name: "Applications",
@@ -72,6 +73,28 @@ var treeData = {
     ]
 };
 
+var treeData =
+{
+    name: "click",
+    type: "event",
+    root: true,
+    contents: 
+    [
+        {
+            name: "clickHandler1",
+            type: "handler"     
+        },
+        {
+            name: "clickHandler2",
+            type: "handler"     
+        },
+        {
+            name: "clickHandler3",
+            type: "handler"     
+        }
+    ]
+};
+
 function visit(parent, visitFn, childrenFn)
 {
     if (!parent) return;
@@ -96,19 +119,33 @@ function buildTree(containerName, customOptions)
 
     
     // Calculate total nodes, max label length
+    var totalDepth = 0;
     var totalNodes = 0;
     var maxLabelLength = 0;
     visit(treeData, function(d)
     {
+        // Initialize depth at root.
+        if (!d.depth)
+            d.depth = 0;
+
         totalNodes++;
         maxLabelLength = Math.max(d.name.length, maxLabelLength);
     }, function(d)
     {
+        // Increment depth for children.
+        if (d.contents) {
+            var childDepth = d.depth + 1;
+            for (var i = 0; i < d.contents.length; i++)
+                d.contents[i].depth = childDepth;
+            totalDepth = Math.max(totalDepth, childDepth);
+        }
+
         return d.contents && d.contents.length > 0 ? d.contents : null;
     });
 
     // size of the diagram
-    var size = { width:$(containerName).outerWidth(), height: totalNodes * 15};
+    var widthPerDepthLevel = maxLabelLength*options.fontSize * 2;
+    var size = { width: totalDepth * widthPerDepthLevel, height: totalNodes * 15};
 
     var tree = d3.layout.tree()
         .sort(null)
@@ -160,7 +197,10 @@ function buildTree(containerName, customOptions)
         .data(nodes)
         .enter()
         .append("svg:g")
-        .attr("class", "node")
+        .attr("class", function(d)
+        {
+            return "node node-" + d.type ;
+        })
         .attr("transform", function(d)
         {
             return "translate(" + d.y + "," + d.x + ")";
@@ -173,12 +213,12 @@ function buildTree(containerName, customOptions)
     nodeGroup.append("svg:text")
         .attr("text-anchor", function(d)
         {
-            return d.children ? "end" : "start";
+            return d.children && !d.root ? "end" : "start";
         })
         .attr("dx", function(d)
         {
             var gap = 2 * options.nodeRadius;
-            return d.children ? -gap : gap;
+            return d.children && !d.root ? -gap : gap;
         })
         .attr("dy", 3)
         .text(function(d)
