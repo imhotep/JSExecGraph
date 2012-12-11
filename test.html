@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>js</title>
+		<style media="screen">
+		body {
+			background: #fff;
+		}
+		#target {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			width: 100px;
+			height: 100px;
+			background: #333;
+		}
+		#target2 {
+			position: absolute;
+			top: 10px;
+			left: 120px;
+			width: 100px;
+			height: 100px;
+			background: #c33;
+		}
+		#finish {
+			position: absolute;
+			top: 120px;
+			left: 10px;
+		}
+		</style>
+		<script>
+		window.onload = function () {
+			var job = function () {
+				for (var i = 0; i < 11e6; i++) {
+					var j = i * 2;
+				}
+				
+			},
+			json = [],
+			handlers = [function () {
+				job();
+			}, function () {
+				job();
+				click(3)();
+				job();
+			}];
+			
+			
+			document.getElementById("target").onclick = click(1);
+			document.getElementById("target2").onclick = click(2);
+			function time() {
+				return +new Date;
+			}
+			function log(name, time) {
+				var id = ++id;
+				log.log[id] = {
+					name: name,
+					time: time,
+					nodes: []
+				};
+				json.push(log.log[id]);
+				return id;
+			}
+			function logNode(id, start, end, src) {
+				log.log[id].nodes.push({
+					start: start,
+					end: end,
+					src: String(src)
+				});
+			}
+			var id = 0;
+			log.log = {};
+			function click(name) {
+				return function () {
+					var id = log(name, time()),
+						start,
+						end;
+					if (name == 3) {
+						start = time();
+						handlers[0]();
+						logNode(id, start, time(), handlers[0]);
+						return;
+					}
+					for (var i = 0; i < handlers.length; i++) {
+						start = time();
+						handlers[i]();
+						logNode(id, start, time(), handlers[i]);
+					}
+				};
+			}
+			setTimeout(function () {
+				var name = "timeout",
+					id = log(name, time());
+				for (var i = 0; i < handlers.length; i++) {
+					start = time();
+					handlers[i]();
+					logNode(id, start, time(), handlers[i]);
+				}
+			}, 1000);
+			document.getElementById("finish").onclick = function () {
+				console.log(JSON.stringify(json), json);
+			};
+		};
+		</script>
+	</head>
+	<body>
+		<div id="target"></div>
+		<div id="target2"></div>
+		<button id="finish">Finish</button>
+	</body>
+</html>
