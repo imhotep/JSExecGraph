@@ -56,7 +56,7 @@
 			function log(name, time) {
 				var id = ++id;
 				log.log[id] = {
-					name: name,
+					name: String(name),
 					time: time,
 					nodes: []
 				};
@@ -67,7 +67,7 @@
 				log.log[id].nodes.push({
 					start: start,
 					end: end,
-					src: String(src)
+					name: String(src)
 				});
 			}
 			var id = 0;
@@ -101,6 +101,7 @@
 			}, 1000);
 			document.getElementById("finish").onclick = function () {
 				console.log(JSON.stringify(json), json);
+				buildTrees(json, "#trees-container");
 			};
 		};
 		</script>
@@ -168,7 +169,7 @@
 
 		<script>
 		    $(function(){
-		        buildTrees(treeDataArray, "#trees-container");
+		        //buildTrees(treeDataArray, "#trees-container");
 		    });
 		</script>
 	</body>

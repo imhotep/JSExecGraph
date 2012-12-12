@@ -228,6 +228,29 @@ var treeDataArray =
             {
                 name: "clickHandler4",
                 type: "handler"     
+            },
+            {
+                name: "clickHandler5",
+                type: "handler",
+                contents: 
+                [
+                    {
+                        name: "clickHandler1",
+                        type: "handler"     
+                    },
+                    {
+                        name: "clickHandler2",
+                        type: "handler"     
+                    },
+                    {
+                        name: "clickHandler3",
+                        type: "handler"     
+                    },
+                    {
+                        name: "clickHandler4",
+                        type: "handler"     
+                    }
+                ]
             }
         ]
     }
@@ -260,7 +283,10 @@ function buildTrees(treeDataArray, treesContainerName)
 
 function buildTree(treeData, containerName, customOptions)
 {
-    var childrenName = "contents";
+    var childrenName = "nodes";
+
+    if (treeData)
+        treeData.root = true;
 
     // build the options object
     var options = $.extend({
@@ -293,7 +319,7 @@ function buildTree(treeData, containerName, customOptions)
     });
 
     // size of the diagram
-    var widthPerDepthLevel = maxLabelLength*options.fontSize * 2;
+    var widthPerDepthLevel = maxLabelLength*options.fontSize * 1.5;
     var size = { width: totalDepth * widthPerDepthLevel, height: totalNodes * 15};
 
     var tree = d3.layout.tree()
