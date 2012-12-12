@@ -73,27 +73,165 @@ var xtreeData = {
     ]
 };
 
-var treeData =
-{
-    name: "click",
-    type: "event",
-    root: true,
-    contents: 
-    [
-        {
-            name: "clickHandler1",
-            type: "handler"     
-        },
-        {
-            name: "clickHandler2",
-            type: "handler"     
-        },
-        {
-            name: "clickHandler3",
-            type: "handler"     
-        }
-    ]
-};
+var treeDataArray =
+[
+    {
+        name: "click",
+        type: "event",
+        root: true,
+        contents: 
+        [
+            {
+                name: "clickHandler1",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler2",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler3",
+                type: "handler"     
+            }
+        ]
+    },
+    {
+        name: "click",
+        type: "event",
+        root: true,
+        contents: 
+        [
+            {
+                name: "clickHandler1",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler3",
+                type: "handler"     
+            }
+        ]
+    },
+    {
+        name: "click",
+        type: "event",
+        root: true,
+        contents: 
+        [
+            {
+                name: "clickHandler1",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler2",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler3",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler4",
+                type: "handler"     
+            }
+        ]
+    },
+    {
+        name: "click",
+        type: "event",
+        root: true,
+        contents: 
+        [
+            {
+                name: "clickHandler1",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler2",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler3",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler4",
+                type: "handler"     
+            }
+        ]
+    },
+    {
+        name: "click",
+        type: "event",
+        root: true,
+        contents: 
+        [
+            {
+                name: "clickHandler1",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler2",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler3",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler4",
+                type: "handler"     
+            }
+        ]
+    },
+    {
+        name: "click",
+        type: "event",
+        root: true,
+        contents: 
+        [
+            {
+                name: "clickHandler1",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler2",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler3",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler4",
+                type: "handler"     
+            }
+        ]
+    },
+    {
+        name: "click",
+        type: "event",
+        root: true,
+        contents: 
+        [
+            {
+                name: "clickHandler1",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler2",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler3",
+                type: "handler"     
+            },
+            {
+                name: "clickHandler4",
+                type: "handler"     
+            }
+        ]
+    }
+];
 
 function visit(parent, visitFn, childrenFn)
 {
@@ -110,13 +248,24 @@ function visit(parent, visitFn, childrenFn)
     }
 }
 
-function buildTree(containerName, customOptions)
+function buildTrees(treeDataArray, treesContainerName)
 {
+    for (var i = 0; i < treeDataArray.length; i++) {
+        var treeContainerId = "tree-" + i;
+        var treeContainer = $('<div class="tree-container"></div>').attr("id", treeContainerId);
+        $(treesContainerName).append(treeContainer);
+        buildTree(treeDataArray[i], "#" + treeContainerId);
+    }
+}
+
+function buildTree(treeData, containerName, customOptions)
+{
+    var childrenName = "contents";
+
     // build the options object
     var options = $.extend({
         nodeRadius: 5, fontSize: 12
     }, customOptions);
-
     
     // Calculate total nodes, max label length
     var totalDepth = 0;
@@ -133,14 +282,14 @@ function buildTree(containerName, customOptions)
     }, function(d)
     {
         // Increment depth for children.
-        if (d.contents) {
+        if (d[childrenName]) {
             var childDepth = d.depth + 1;
-            for (var i = 0; i < d.contents.length; i++)
-                d.contents[i].depth = childDepth;
+            for (var i = 0; i < d[childrenName].length; i++)
+                d[childrenName][i].depth = childDepth;
             totalDepth = Math.max(totalDepth, childDepth);
         }
 
-        return d.contents && d.contents.length > 0 ? d.contents : null;
+        return d[childrenName] && d[childrenName].length > 0 ? d[childrenName] : null;
     });
 
     // size of the diagram
@@ -152,7 +301,7 @@ function buildTree(containerName, customOptions)
         .size([size.height, size.width - maxLabelLength*options.fontSize])
         .children(function(d)
         {
-            return (!d.contents || d.contents.length === 0) ? null : d.contents;
+            return (!d[childrenName] || d[childrenName].length === 0) ? null : d[childrenName];
         });
 
     var nodes = tree.nodes(treeData);
